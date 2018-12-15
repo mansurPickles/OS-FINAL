@@ -272,7 +272,6 @@ record getHashTableRecord(const int& id)
     hashTable.at(mod).lockCell();
 
     list<record>::const_iterator lIt = hashTable.at(mod).recordList.begin();
-    cout << "here\n";
 
     while(lIt!=hashTable.at(mod).recordList.end()){
         if(lIt->id==id){
