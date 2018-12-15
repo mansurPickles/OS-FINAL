@@ -193,7 +193,7 @@ void sendRecord(const int& msqid, const record& rec)
     strncpy(msg.lastName, rec.lastName.c_str(), MAX_NAME_LEN);
 	
     /* Send the message */
-//    sendMessage(msqid, msg);  //commented out because it gives me error during compile
+    sendMessage(msqid, msg);  //commented out because it gives me error during compile
 }
 
 /**
@@ -259,14 +259,35 @@ record getHashTableRecord(const int& id)
 {
 	/* The data structure to hold the record */
 	record rec;
+
+    /* TODO: Find the cell containing the record with the specificied ID. Search
+     * the linklist of records in that cell and see if its ID matches. If so, return that
+     * record. If not, return a record with ID of -1 indicating that no such record is present.
+     * PLEASE REMEMBER: YOU NEED TO AVOID RACE CONDITIONS ON THE RECORDS IN THE SAME CELL.
+     * You will need to lock the appropriate cell mutex.
+     */
 	
-	/* TODO: Find the cell containing the record with the specificied ID. Search
-	 * the linklist of records in that cell and see if its ID matches. If so, return that
-	 * record. If not, return a record with ID of -1 indicating that no such record is present.
- 	 * PLEASE REMEMBER: YOU NEED TO AVOID RACE CONDITIONS ON THE RECORDS IN THE SAME CELL.
-	 * You will need to lock the appropriate cell mutex.
-	 */
-	
+    int mod = id%NUMBER_OF_HASH_CELLS;
+
+    hashTable.at(mod).lockCell();
+
+    list<record>::const_iterator lIt = hashTable.at(mod).recordList.begin();
+    cout << "here\n";
+
+    while(lIt!=hashTable.at(mod).recordList.end()){
+        if(lIt->id==id){
+            rec.firstName = lIt->firstName;
+            rec.id = lIt->id;
+            rec.lastName = lIt->lastName;
+            hashTable.at(mod).unlockCell();
+            return rec;
+        }
+        ++lIt;
+    }
+
+
+    rec.id = -1;
+    hashTable.at(mod).unlockCell();
 	return rec;
 }
 
@@ -515,6 +536,22 @@ int main(int argc, char** argv)
     }
 
     printHashTable();
+
+
+    cout << "testing retrieve\n\n\n\n\n";
+
+
+    for (int i=0; i< 500; i++){
+        int num = rand()%1000 +1;
+        record rec1;
+        rec1 = getHashTableRecord(num);
+        if(rec1.id!=-1){
+            cout << rec1.id << "\t" << rec1.firstName << "\t" << rec1.lastName << endl;
+        }
+        else {
+            cout << "record not found\n";
+        }
+    }
 
 
     return 0;
