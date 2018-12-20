@@ -52,7 +52,7 @@ void sendMessage(const int& msqid, message& msg)
 	if(msgsnd(msqid, &msg, sizeof(msg) - sizeof(long), 0) < 0)
 	{
 		perror("msgsnd");
-		//exit(-1);
+        exit(-1);
 	}
 }
 

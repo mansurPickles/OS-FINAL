@@ -521,40 +521,6 @@ int main(int argc, char** argv)
 	/* Populate the hash table */
 	populateHashTable(argv[1]);
 	
-	
-    printHashTable();
-
-
-    //testing add
-    cout << "testing add 500\n\n\n";
-
-    for (int i=0; i< 500; i++){
-        int num = 1000;
-        int* ptr = &num;
-        addNewRecords(ptr);
-    }
-
-    printHashTable();
-
-
-    cout << "testing retrieve\n\n\n\n\n";
-
-
-    for (int i=0; i< 500; i++){
-        int num = rand()%1000 +1;
-        record rec1;
-        rec1 = getHashTableRecord(num);
-        if(rec1.id!=-1){
-            cout << rec1.id << "\t" << rec1.firstName << "\t" << rec1.lastName << endl;
-        }
-        else {
-            cout << "record not found\n";
-        }
-    }
-
-
-    return 0;
-	
 	/* Get the number of threads */
     numThreads = atoi(argv[2]);
 	
